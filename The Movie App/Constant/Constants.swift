@@ -5,4 +5,8 @@
 //  Created by Nitesh Sharma on 03/07/24.
 //
 
-import Foundation
+enum Constant {
+    enum API {
+        static let movieURL = "https://www.omdbapi.com/?i=tt3896198&apikey=d02a460e"
+    }
+}

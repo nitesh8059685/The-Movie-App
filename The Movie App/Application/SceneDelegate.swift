@@ -17,6 +17,24 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let _ = (scene as? UIWindowScene) else { return }
+        
+        self.splashScreen()
+    }
+    
+    // LaunchScreen
+    private func splashScreen() {
+        let launchScreenVC = UIStoryboard(name: "LaunchScreen", bundle: nil)
+        let rootVC = launchScreenVC.instantiateViewController(identifier: "LaunchScreenController")
+        self.window?.rootViewController = rootVC
+        self.window?.makeKeyAndVisible()
+        Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(dismissSplashScreen), userInfo: nil, repeats: false)
+    }
+    
+    @objc func dismissSplashScreen() {
+        let mainVC = UIStoryboard(name: "Main", bundle: nil)
+        let rootVC = mainVC.instantiateViewController(withIdentifier: "NavigationController")
+        self.window?.rootViewController = rootVC
+        self.window?.makeKeyAndVisible()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
