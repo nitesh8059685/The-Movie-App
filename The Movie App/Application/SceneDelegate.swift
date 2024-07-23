@@ -2,7 +2,7 @@
 //  SceneDelegate.swift
 //  The Movie App
 //
-//  Created by Nitesh Sharma on 02/07/24.
+//  Created by Nitesh Sharma on 23/07/24.
 //
 
 import UIKit
@@ -21,15 +21,17 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         self.splashScreen()
     }
     
-    // LaunchScreen
+    // Method to display the splash screen
     private func splashScreen() {
         let launchScreenVC = UIStoryboard(name: "LaunchScreen", bundle: nil)
         let rootVC = launchScreenVC.instantiateViewController(identifier: "LaunchScreenController")
         self.window?.rootViewController = rootVC
         self.window?.makeKeyAndVisible()
+        // Schedule a timer to dismiss the splash screen after 3 seconds
         Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(dismissSplashScreen), userInfo: nil, repeats: false)
     }
     
+    // Method to dismiss the splash screen and display the main view controller
     @objc func dismissSplashScreen() {
         let mainVC = UIStoryboard(name: "Main", bundle: nil)
         let rootVC = mainVC.instantiateViewController(withIdentifier: "NavigationController")

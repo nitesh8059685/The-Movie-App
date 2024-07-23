@@ -2,7 +2,7 @@
 //  AppDelegate.swift
 //  The Movie App
 //
-//  Created by Nitesh Sharma on 02/07/24.
+//  Created by Nitesh Sharma on 23/07/24.
 //
 
 import UIKit
@@ -15,6 +15,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        UserDefaults.standard.set(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
         return true
     }
     

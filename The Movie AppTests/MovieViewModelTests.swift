@@ -6,30 +6,115 @@
 //
 
 import XCTest
+@testable import The_Movie_App
 
 final class MovieViewModelTests: XCTestCase {
-
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+    
+    var viewModel: MovieViewModel!   // The ViewModel instance to be tested
+    var mockAPIManager: MockAPIManager!  // The mock API manager to simulate network responses
+    
+    var didFetchMoviesCalled = false
+    var didEncounterErrorCalled = false
+    var receivedErrorMessage: String?
+    
+    override func setUp() {
+        super.setUp()
+        // Initialize the mock API manager
+        mockAPIManager = MockAPIManager()
+        viewModel = MovieViewModel()
+        // Initialize the ViewModel with the mock API manager
+        viewModel = MovieViewModel(apiManager: mockAPIManager)
+        viewModel.delegate = self
     }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+    override func tearDown() {
+        // Clean up after each test
+        viewModel = nil
+        mockAPIManager = nil
+        didFetchMoviesCalled = false
+        didEncounterErrorCalled = false
+        receivedErrorMessage = nil
+        super.tearDown()
     }
-
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
-    }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
+    
+    // Test case for successful movie fetch
+    func testFetchMoviesSuccess() {
+        // Create a mock movie object for the test
+        let expectedMovie = Movie(
+            title: "Mock Movie",
+            year: "2024",
+            rated: "PG",
+            released: "01 Jan 2024",
+            runtime: "120 min",
+            genre: "Action",
+            director: "Jane Doe",
+            writer: "John Doe",
+            actors: "Actor One, Actor Two",
+            plot: "A thrilling mock movie.",
+            language: "English",
+            country: "USA",
+            awards: "None",
+            poster: "https://example.com/mockposter.jpg",
+            ratings: [
+                Rating(source: "Mock Source", value: "9.0/10")
+            ],
+            metascore: "N/A",
+            imdbRating: "9.0",
+            imdbVotes: "1,000",
+            imdbID: "tt0000000",
+            type: "movie",
+            dvd: "01 Feb 2024",
+            boxOffice: "$100,000,000",
+            production: "Mock Production",
+            website: "https://example.com",
+            response: "True"
+        )
+        
+        mockAPIManager.mockResult = .success(expectedMovie)
+        
+        let expectation = XCTestExpectation(description: "Fetch movies")
+        // Trigger the fetch movies method
+        viewModel.fetchMovies()
+        
+        // Check the result after a short delay
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            XCTAssertTrue(self.didFetchMoviesCalled)
+            XCTAssertEqual(self.viewModel.movies.first?.title, expectedMovie.title)
+            XCTAssertEqual(self.viewModel.movies.first?.year, expectedMovie.year)
+            expectation.fulfill()
         }
+        wait(for: [expectation], timeout: 2.0)
     }
+    
+    // Test case for failed movie fetch
+    func testFetchMoviesFailure() {
+        // Given
+        let expectedError = NSError(domain: "Test", code: -1, userInfo: nil)
+        mockAPIManager.mockResult = .failure(expectedError)
+        
+        let expectation = XCTestExpectation(description: "Fetch movies")
+        // Trigger the fetch movies method
+        viewModel.fetchMovies()
+        
+        // Check the result after a short delay
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            XCTAssertTrue(self.didEncounterErrorCalled)
+            XCTAssertEqual(self.receivedErrorMessage, expectedError.localizedDescription)
+            XCTAssertTrue(self.viewModel.movies.isEmpty)
+            expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: 2.0)
+    }
+    
+}
 
+// MARK: - MovieViewModelDelegate
+extension MovieViewModelTests: MovieViewModelDelegate {
+    func didFetchMovies() {
+        didFetchMoviesCalled = true
+    }
+    
+    func didEncounterError(_ errorMessage: String) {
+        didEncounterErrorCalled = true
+        receivedErrorMessage = errorMessage    }
 }

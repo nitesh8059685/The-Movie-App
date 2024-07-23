@@ -2,53 +2,65 @@
 //  APIManager.swift
 //  The Movie App
 //
-//  Created by Nitesh Sharma on 03/07/24.
+//  Created by Nitesh Sharma on 23/07/24.
 //
 
 import UIKit
 
-enum DataError: Error, LocalizedError {
-    case invalidResponse
-    case invalidURL
-    case network(Error?)
-    
-    var errorDescription: String? {
-        switch self {
-        case .invalidResponse:
-            return "The response is invalid."
-        case .invalidURL:
-            return "The URL failed."
-        case .network:
-            return "Failed to decode the data."
-        }
-    }
-}
-
 // Singleton Design Pattern
-class APIManager {
+class APIManager: APIManagerProtocol {
     
+    // Shared singleton instance
     static let shared = APIManager()
-    private init() { }
+    var session: URLSession
     
-    //NOTE: I am using URLSession and async/await to fetch data asynchronously.
-    func request<T: Decodable>(url: String) async throws -> T {
-        
-        guard let url = URL(string:url) else {
-            throw DataError.invalidURL
+    private init(session: URLSession = .shared) {
+        self.session = session
+    }
+    
+    // Type alias for the completion handler
+    typealias MovieCompletionHandler = (Result<Movie, Error>) -> Void
+    
+    // Method to fetch movies using a completion handler
+    func fetchMovies(completion: @escaping MovieCompletionHandler) {
+        guard let url = URL(string: Constant.API.movieURL) else {
+            completion(.failure(NSError(domain: "Invalid URL", code: -1, userInfo: nil)))
+            return
         }
-        
-        do {
-            let (data, response) = try await URLSession.shared.data(from: url)
+        // Create a data task to fetch the movie data
+        let task = session.dataTask(with: url) { data, response, error in
             
-            guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-                throw DataError.invalidResponse
+            // Handle any errors
+            if let error = error {
+                completion(.failure(error))
+                return
+            }
+            // Ensure the response is valid and within the 200-299 range
+            guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
+                completion(.failure(NSError(domain: "Invalid response", code: -1, userInfo: nil)))
+                return
             }
             
-            return try JSONDecoder().decode(T.self, from: data)
+            // Ensure data was received
+            guard let data = data else {
+                completion(.failure(NSError(domain: "NO Data Recieved", code: -1, userInfo: nil)))
+                return
+            }
             
-        } catch {
-            throw error
+            // Decode the data into an array of Movie objects
+            do {
+                let decodedData = try JSONDecoder().decode(Movie.self, from: data)
+                completion(.success(decodedData))
+            } catch {
+                completion(.failure(error))
+            }
+            
         }
+        task.resume()
+    }
+    
+    // Method to configure the session, useful for dependency injection in tests
+    func configure(with session: URLSession) {
+        self.session = session
     }
 }
-

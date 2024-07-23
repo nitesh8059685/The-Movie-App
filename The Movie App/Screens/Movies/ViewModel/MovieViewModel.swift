@@ -2,29 +2,38 @@
 //  MovieViewModel.swift
 //  The Movie App
 //
-//  Created by Nitesh Sharma on 03/07/24.
+//  Created by Nitesh Sharma on 23/07/24.
 //
 
 import Foundation
 
-protocol MovieViewModelDelegate: AnyObject {
-    func didUpdateMovies<T: Decodable>(_ movies: [T])
-    func didEncounterError(_ error: String)
-}
-
-@MainActor
-class MovieViewModel<T: Decodable> {
+class MovieViewModel {
     
-    weak var delegate: MovieViewModelDelegate?
-    private(set) var movies: [T] = []
+    weak var delegate: MovieViewModelDelegate?      // Delegate to communicate with the ViewController
+    var movies: [Movie] = []
+    private var apiManager: APIManagerProtocol
     
-    func fetchMovies(from urlString: String) async {
-        do {
-            let movies: [T] = try await APIManager.shared.request(url: urlString)
-            self.movies = movies
-            delegate?.didUpdateMovies(movies)
-        } catch {
-            delegate?.didEncounterError(error.localizedDescription)
+    // Initializer to accept APIManagerProtocol
+       init(apiManager: APIManagerProtocol = APIManager.shared) {
+           self.apiManager = apiManager
+       }
+    
+    
+    // Method to fetch movies from the API
+    func fetchMovies() {
+        apiManager.fetchMovies { [weak self] result in
+            guard let self = self else { return }
+            
+            // Execute UI updates on the main thread
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let newMovies):
+                    self.movies.append(newMovies)
+                    self.delegate?.didFetchMovies()
+                case .failure(let error):
+                    self.delegate?.didEncounterError(error.localizedDescription)
+                }
+            }
         }
     }
 }

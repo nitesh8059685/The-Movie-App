@@ -22,28 +22,36 @@
                         <subviews>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="9sD-cd-tIf">
                                 <rect key="frame" x="8.0000000000000071" y="8" width="121.66666666666669" height="168"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="168" id="SyR-WE-MmD"/>
+                                </constraints>
                             </imageView>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="Zf1-RU-kuu">
                                 <rect key="frame" x="145.66666666666663" y="8" width="150.33333333333337" height="168"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pBg-gG-Hns">
-                                        <rect key="frame" x="0.0" y="0.0" width="150.33333333333334" height="56"/>
-                                        <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
-                                        <nil key="textColor"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Release Date" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WSg-ng-sYf">
-                                        <rect key="frame" x="0.0" y="56" width="150.33333333333334" height="56"/>
-                                        <fontDescription key="fontDescription" style="UICTFontTextStyleSubhead"/>
-                                        <color key="textColor" systemColor="secondaryLabelColor"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Qzm-8k-RKX">
-                                        <rect key="frame" x="0.0" y="112" width="150.33333333333334" height="56"/>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="hgn-5u-AHG">
+                                        <rect key="frame" x="0.0" y="0.0" width="150.33333333333334" height="84"/>
+                                        <subviews>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" showsExpansionTextWhenTruncated="YES" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pBg-gG-Hns">
+                                                <rect key="frame" x="0.0" y="0.0" width="150.33333333333334" height="42"/>
+                                                <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Release Date" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WSg-ng-sYf">
+                                                <rect key="frame" x="0.0" y="42" width="150.33333333333334" height="42"/>
+                                                <fontDescription key="fontDescription" style="UICTFontTextStyleSubhead"/>
+                                                <color key="textColor" systemColor="secondaryLabelColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                        </subviews>
+                                    </stackView>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="v6F-69-l19">
+                                        <rect key="frame" x="0.0" y="84" width="150.33333333333334" height="84"/>
                                         <state key="normal" title="Button"/>
-                                        <buttonConfiguration key="configuration" style="plain" title="Mark Favourate"/>
+                                        <buttonConfiguration key="configuration" style="plain"/>
                                         <connections>
-                                            <action selector="favourateButton:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="AZx-4G-kec"/>
+                                            <action selector="favoriteButtonClicked:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="Ni6-8U-dqa"/>
                                         </connections>
                                     </button>
                                 </subviews>
@@ -71,13 +79,13 @@
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
             <connections>
-                <outlet property="favourateButtonLabel" destination="Qzm-8k-RKX" id="6XV-6S-D0b"/>
+                <outlet property="favoriteButton" destination="v6F-69-l19" id="8VO-7Q-3fO"/>
                 <outlet property="movieListBackgroundView" destination="Fvl-Lg-ofc" id="Cfl-dx-KpC"/>
                 <outlet property="moviePoster" destination="9sD-cd-tIf" id="Ize-ka-IRH"/>
                 <outlet property="movieReleaseDate" destination="WSg-ng-sYf" id="aBC-vC-TmI"/>
                 <outlet property="movieTitle" destination="pBg-gG-Hns" id="9xb-gD-9sj"/>
             </connections>
-            <point key="canvasLocation" x="135.87786259541986" y="54.577464788732399"/>
+            <point key="canvasLocation" x="135.87786259541986" y="54.225352112676056"/>
         </tableViewCell>
     </objects>
     <resources>
